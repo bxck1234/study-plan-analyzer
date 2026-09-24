@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.log
+
+# Local account and study records
+data/study.db
+
+# Local Site/runtime metadata
+.sites-runtime/
+.openai/
