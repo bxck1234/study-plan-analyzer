@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="基于计划—执行偏差分析的个人学习效率优化工具" />
+  <title>学习计划执行偏差分析工具</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23326b62'/%3E%3Cpath d='M17 19h23a7 7 0 0 1 7 7v22H24a7 7 0 0 1-7-7V19Z' fill='none' stroke='white' stroke-width='5'/%3E%3Cpath d='M24 27h16M24 35h13' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="toast" class="toast"></div>
+
+  <section id="authView" class="auth-layout">
+    <div class="auth-pitch">
+      <div class="brand-mark">SP</div>
+      <p class="eyebrow">学习效率记录</p>
+      <h1>记录计划，<br /><em>看清执行差距。</em></h1>
+      <p class="pitch-copy">用几分钟记录计划和实际用时，帮助你更准确地安排下一次学习。</p>
+      <div class="pitch-points"><span>01</span> 记录计划与实际用时</div>
+      <div class="pitch-points"><span>02</span> 看见长期偏差趋势</div>
+      <div class="pitch-points"><span>03</span> 数据保存在本机</div>
+    </div>
+    <div class="auth-panel">
+      <div class="auth-tabs"><button class="auth-tab active" data-auth="login">登录</button><button class="auth-tab" data-auth="register">注册</button></div>
+      <form id="loginForm" class="auth-form">
+        <h2>欢迎回来</h2><p class="muted">继续记录今天的学习计划</p>
+        <label>用户名<input id="loginUsername" required autocomplete="username" placeholder="至少 3 个字符" /></label>
+        <label>密码<div class="password-field"><input id="loginPassword" required type="password" autocomplete="current-password" placeholder="输入密码" /><button type="button" class="ghost small" data-toggle-password="loginPassword">显示</button></div></label>
+        <label class="checkline"><input id="rememberUsername" type="checkbox" /> 记住用户名</label>
+        <button class="primary wide" type="submit">登录 <span>↗</span></button>
+        <p class="form-foot">还没有账号？<button type="button" class="text-button" data-auth="register">创建一个</button></p>
+      </form>
+      <form id="registerForm" class="auth-form hidden">
+        <h2>创建你的账户</h2><p class="muted">从今天开始，建立自己的学习数据</p>
+        <label>用户名<input id="registerUsername" required autocomplete="username" placeholder="至少 3 个字符" /></label>
+        <label>昵称<input id="registerNickname" required placeholder="你希望被怎样称呼？" /></label>
+        <label>密码<input id="registerPassword" required type="password" autocomplete="new-password" placeholder="至少 6 个字符" /></label>
+        <label>确认密码<input id="registerConfirm" required type="password" autocomplete="new-password" placeholder="再次输入密码" /></label>
+        <button class="primary wide" type="submit">注册并开始 <span>↗</span></button>
+        <p class="form-foot">已有账号？<button type="button" class="text-button" data-auth="login">返回登录</button></p>
+      </form>
+    </div>
+  </section>
+
+  <div id="appView" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="brand-mark small-mark">SP</div><div><strong>学习计划</strong><span>执行偏差分析</span></div></div>
+      <nav id="mainNav" class="main-nav">
+        <button class="nav-item active" data-page="dashboard"><span>⌂</span>首页</button>
+        <button class="nav-item" data-page="plans"><span>◫</span>学习计划</button>
+        <button class="nav-item" data-page="execution"><span>◷</span>执行记录</button>
+        <button class="nav-item" data-page="analysis"><span>◌</span>数据分析</button>
+        <button class="nav-item" data-page="recommendations"><span>✦</span>学习建议</button>
+        <button class="nav-item" data-page="profile"><span>◎</span>我的</button>
+      </nav>
+      <div class="sidebar-bottom"><div class="storage-note"><span class="green-dot"></span> 数据仅保存在本机</div><button id="logoutBtn" class="logout">↪ 退出登录</button></div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar"><div><p class="eyebrow">个人学习记录</p><h2 id="pageHeading">首页</h2></div><div class="top-actions"><button class="icon-button" id="quickAdd">＋ <span>新建任务</span></button><div class="avatar" id="avatar">学</div><div class="user-meta"><strong id="topNickname">同学</strong><span id="topUsername">@user</span></div></div></header>
+      <section id="page-dashboard" class="page active"></section>
+      <section id="page-plans" class="page"></section>
+      <section id="page-execution" class="page"></section>
+      <section id="page-analysis" class="page"></section>
+      <section id="page-recommendations" class="page"></section>
+      <section id="page-profile" class="page"></section>
+    </main>
+  </div>
+
+  <dialog id="taskDialog" class="modal"><form method="dialog" id="taskForm"><div class="modal-head"><div><p class="eyebrow">PLAN BUILDER</p><h3 id="taskDialogTitle">新建学习任务</h3></div><button class="close-button" value="cancel">×</button></div><input id="taskId" type="hidden" /><div class="form-grid"><label>日期<input id="taskDate" type="date" required /></label><label>科目<select id="taskSubject"></select></label><label class="span-2">任务名称<input id="taskName" required placeholder="例如：完成数学函数练习" /></label><label>任务类型<select id="taskType"></select></label><label>计划开始<input id="taskStart" type="time" required /></label><label>计划时长（分钟）<input id="taskDuration" type="number" min="1" max="1440" value="45" required /></label><label>难度<select id="taskDifficulty"><option>简单</option><option selected>一般</option><option>困难</option></select></label><label>优先级<select id="taskPriority"><option>低</option><option selected>中</option><option>高</option></select></label><label>状态<select id="taskStatus"><option>待完成</option><option>进行中</option><option>已完成</option><option>延期</option></select></label><label class="span-2">备注<textarea id="taskNotes" rows="2" placeholder="可选"></textarea></label></div><div id="durationSuggestion" class="suggestion-box hidden"></div><div class="modal-actions"><button class="ghost" value="cancel">取消</button><button class="primary" id="saveTaskBtn" value="default">保存任务</button></div></form></dialog>
+  <dialog id="executionDialog" class="modal"><form method="dialog" id="executionForm"><div class="modal-head"><div><p class="eyebrow">EXECUTION LOG</p><h3>记录实际执行</h3></div><button class="close-button" value="cancel">×</button></div><div class="form-grid"><label class="span-2">计划任务<select id="executionTask" required></select></label><label>实际开始<input id="actualStart" type="time" /></label><label>实际结束<input id="actualEnd" type="time" /></label><label>实际时长（分钟）<input id="actualDuration" type="number" min="0" value="45" required /></label><label>完成程度<select id="completionLevel"><option>未完成</option><option>部分完成</option><option>基本完成</option><option selected>完全完成</option></select></label><label>是否完成<select id="completed"><option value="0">否</option><option value="1">是</option></select></label><label>受到干扰<select id="interrupted"><option value="0">否</option><option value="1">是</option></select></label><label>自我评价<select id="selfEvaluation"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label><label class="span-2">备注<textarea id="executionNotes" rows="2" placeholder="记录影响执行的因素"></textarea></label></div><p class="form-help">填写开始和结束时间后，实际时长会自动计算；也可以直接输入分钟数。</p><div class="modal-actions"><button class="ghost" value="cancel">取消</button><button class="primary" value="default">保存记录</button></div></form></dialog>
+  <script src="app.js"></script>
+</body>
+</html>
